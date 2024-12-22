@@ -5,6 +5,7 @@ import "./styles.css";
 import App from "./App";
 import Counter from "./components/Counter";
 import Todo from "./components/Todo";
+import Cart from "./components/Cart";
 
 const root = createRoot(document.getElementById("root"));
 root.render(
@@ -12,5 +13,6 @@ root.render(
     <App />
     <Counter />
     <Todo />
+    <Cart />
   </StrictMode>
 );
