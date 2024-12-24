@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
 const ItemList = [
-  { name: "A", price: 500, id: 1 },
-  { name: "B", price: 400, id: 2 },
+  { name: "A", price: 500, id: 1, quantity: 0 },
+  { name: "B", price: 400, id: 2, quantity: 0 },
 ];
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -12,16 +12,43 @@ const Cart = () => {
   const [total, setTotal] = useState(0);
 
   const addItem = (item) => {
-    setCart((prev) => [...prev, { ...item, id: generateId() }]);
+    setCart((prev) => {
+      const isExist = prev.find((cartItem) => cartItem.id === item.id);
+
+      if (isExist) {
+        return prev.map((cartItem) =>
+          cartItem.id === item.id
+            ? { ...cartItem, quantity: cartItem.quantity + 1 }
+            : cartItem
+        );
+      } else {
+        return [...prev, { ...item, quantity: 1 }];
+      }
+    });
   };
 
   const removeItem = (item) => {
-    const newCartItems = cart.filter((i) => i.id !== item.id);
-    setCart(newCartItems);
+    setCart((prev) =>
+      prev
+        .map((cartItem) => {
+          if (cartItem.id === item.id) {
+            if (cartItem.quantity > 1) {
+              return { ...cartItem, quantity: cartItem.quantity - 1 };
+            }
+
+            return null;
+          }
+          return cartItem;
+        })
+        .filter(Boolean)
+    );
   };
 
   useEffect(() => {
-    const newTotal = cart.reduce((sum, item) => sum + item.price, 0);
+    const newTotal = cart.reduce(
+      (sum, item) => sum + item.price * item.quantity,
+      0
+    );
     setTotal(newTotal);
     console.log(cart);
   }, [cart]);
@@ -46,14 +73,10 @@ const Cart = () => {
       ) : (
         cart.map((item) => {
           return (
-            <>
-              <li key={item.name}>
-                {item.name}-{item.price}円
-                <button onClick={() => removeItem(item)}>
-                  Remove from Cart
-                </button>
-              </li>
-            </>
+            <li key={item.id}>
+              {item.name}-{item.price}円 ✖️ {item.quantity}
+              <button onClick={() => removeItem(item)}>Remove from Cart</button>
+            </li>
           );
         })
       )}
