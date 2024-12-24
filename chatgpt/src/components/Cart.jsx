@@ -28,17 +28,44 @@ const Cart = () => {
   };
 
   const removeItem = (item) => {
+    // setCart((prev) =>
+    //   prev
+    //     .map((cartItem) => {
+    //       if (cartItem.id === item.id) {
+    //         return null;
+    //       }
+    //       return cartItem;
+    //     })
+    //     .filter(Boolean)
+    // );
+    setCart((prev) => prev.filter((cartItem) => cartItem.id !== item.id));
+  };
+
+  const incrementItem = (item) => {
+    setCart((prev) =>
+      prev.map((cartItem) => {
+        if (cartItem.id === item.id) {
+          return { ...cartItem, quantity: cartItem.quantity + 1 };
+        } else {
+          return cartItem;
+        }
+      })
+    );
+  };
+
+  const decrementItem = (item) => {
     setCart((prev) =>
       prev
         .map((cartItem) => {
           if (cartItem.id === item.id) {
-            if (cartItem.quantity > 1) {
+            if (item.quantity === 1) {
+              return null;
+            } else {
               return { ...cartItem, quantity: cartItem.quantity - 1 };
             }
-
-            return null;
+          } else {
+            return cartItem;
           }
-          return cartItem;
         })
         .filter(Boolean)
     );
@@ -75,13 +102,15 @@ const Cart = () => {
           return (
             <li key={item.id}>
               {item.name}-{item.price}円 ✖️ {item.quantity}
+              <button onClick={() => incrementItem(item)}>+</button>
+              <button onClick={() => decrementItem(item)}>-</button>
               <button onClick={() => removeItem(item)}>Remove from Cart</button>
             </li>
           );
         })
       )}
       <h3>Total</h3>
-      <div>{total}円</div>
+      <div>{cart.length > 0 ? `${total}円` : "カートが空です"}</div>
     </div>
   );
 };
