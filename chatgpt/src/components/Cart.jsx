@@ -71,6 +71,27 @@ const Cart = () => {
     );
   };
 
+  const clearCart = () => {
+    setCart([]);
+  };
+
+  const changeQuantity = (value, itemId) => {
+    console.log("value", value, isNaN(value));
+    const quantity = parseInt(value);
+    if (quantity <= 0 || isNaN(quantity)) {
+      alert("個数を入力してください(０以外)");
+      return;
+    }
+    return setCart((prev) =>
+      prev.map((item) => {
+        if (item.id === itemId) {
+          return { ...item, quantity };
+        }
+        return item;
+      })
+    );
+  };
+
   useEffect(() => {
     const newTotal = cart.reduce(
       (sum, item) => sum + item.price * item.quantity,
@@ -95,13 +116,26 @@ const Cart = () => {
         })}
       </ul>
       <h2>カートの中身</h2>
+      {cart.length !== 0 ? (
+        <button onClick={clearCart}>カートを空にする</button>
+      ) : (
+        ""
+      )}
       {cart.length === 0 ? (
         <p>カートは空です</p>
       ) : (
         cart.map((item) => {
           return (
             <li key={item.id}>
-              {item.name}-{item.price}円 ✖️ {item.quantity}
+              {item.name}-{item.price}円 ✖️
+              <input
+                type="number"
+                min="1"
+                step="1"
+                value={item.quantity}
+                onChange={(e) => changeQuantity(e.target.value, item.id)}
+              ></input>
+              ={item.price * item.quantity}円
               <button onClick={() => incrementItem(item)}>+</button>
               <button onClick={() => decrementItem(item)}>-</button>
               <button onClick={() => removeItem(item)}>Remove from Cart</button>
@@ -110,7 +144,7 @@ const Cart = () => {
         })
       )}
       <h3>Total</h3>
-      <div>{cart.length > 0 ? `${total}円` : "カートが空です"}</div>
+      <div>{total}円</div>
     </div>
   );
 };
