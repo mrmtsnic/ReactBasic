@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
 
 const ItemList = [
-  { name: "A", price: 500, id: 1, quantity: 0 },
-  { name: "B", price: 400, id: 2, quantity: 0 },
+  { name: "A", price: 500, id: 1, quantity: 0, stock: 2 },
+  { name: "B", price: 400, id: 2, quantity: 0, stock: 3 },
 ];
 
 const generateId = () => Math.random().toString(36).substr(2, 9);
@@ -10,8 +10,17 @@ const generateId = () => Math.random().toString(36).substr(2, 9);
 const Cart = () => {
   const [cart, setCart] = useState([]);
   const [total, setTotal] = useState(0);
+  const [itemList, setItemList] = useState(ItemList);
 
   const addItem = (item) => {
+    if (item.stock === 0) {
+      alert("在庫がありません");
+      return;
+    }
+    setItemList((prev) =>
+      prev.map((i) => (i.id === item.id ? { ...i, stock: i.stock - 1 } : i))
+    );
+
     setCart((prev) => {
       const isExist = prev.find((cartItem) => cartItem.id === item.id);
 
@@ -58,6 +67,7 @@ const Cart = () => {
       prev
         .map((cartItem) => {
           if (cartItem.id === item.id) {
+            increaseStock(cartItem.id);
             if (item.quantity === 1) {
               return null;
             } else {
@@ -76,12 +86,14 @@ const Cart = () => {
   };
 
   const changeQuantity = (value, itemId) => {
-    console.log("value", value, isNaN(value));
     const quantity = parseInt(value);
-    if (quantity <= 0 || isNaN(quantity)) {
-      alert("個数を入力してください(０以外)");
+
+    const stock = itemList.find((item) => item.id === itemId).stock;
+    if (quantity > stock) {
+      alert("在庫を超えることはできません");
       return;
     }
+
     return setCart((prev) =>
       prev.map((item) => {
         if (item.id === itemId) {
@@ -101,16 +113,22 @@ const Cart = () => {
     console.log(cart);
   }, [cart]);
 
+  const increaseStock = (id) => {
+    ItemList[id];
+  };
+
   return (
     <div className="cart">
       <h1>Cart</h1>
       <h2>ItemList</h2>
       <ul>
-        {ItemList.map((item) => {
+        {itemList.map((item) => {
           return (
             <li key={item.id}>
-              {item.name}-{item.price}円
-              <button onClick={() => addItem(item)}>Add to Cart</button>
+              {item.name}-{item.price}円 在庫：{item.stock}個
+              <button disabled={item.stock === 0} onClick={() => addItem(item)}>
+                Add to Cart
+              </button>
             </li>
           );
         })}
