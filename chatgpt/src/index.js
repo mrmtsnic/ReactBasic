@@ -12,7 +12,7 @@ root.render(
   <StrictMode>
     {/* <App />
     <Counter />
-    <Todo /> */}
-    <Cart />
+    <Cart /> */}
+    <Todo />
   </StrictMode>
 );

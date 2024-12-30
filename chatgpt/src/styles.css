@@ -98,3 +98,8 @@ body {
   border: 1px solid black;
   margin-top: 10px;
 }
+
+.done {
+  text-decoration: line-through;
+  color: gray;
+}
