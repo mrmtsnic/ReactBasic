@@ -6,6 +6,7 @@ import App from "./App";
 import Counter from "./components/Counter";
 import Todo from "./components/Todo";
 import Cart from "./components/Cart";
+import UseReducer from "./components/UseReducer";
 
 const root = createRoot(document.getElementById("root"));
 root.render(
@@ -13,6 +14,8 @@ root.render(
     {/* <App />
     <Counter />
     <Cart /> */}
-    <Todo />
+    {/* <Todo />
+     */}
+    <UseReducer />
   </StrictMode>
 );
